@@ -10,9 +10,9 @@ using std::string;
 using std::vector;
 using std::abs;
 
-enum class State {kEmpty, kObstacle};
+enum class State {kEmpty, kObstacle, kClosed};
 
-// Add the ParseLine function.
+// Implement the ParseLine function.
 auto ParseLine(string line)
 {
     istringstream myline(line);
@@ -33,7 +33,7 @@ auto ParseLine(string line)
     return sv;
     
 }
-// Add the ReadBoardFile function.
+// Implement the ReadBoardFile function.
 auto ReadBoardFile(string path) {
   ifstream myfile (path);
   vector<vector<State>> board;
@@ -53,17 +53,25 @@ string CellString(State cell)
     {
     case State::kObstacle:
         return "⛰️   ";
+    case State::kClosed:
+        return "2   ";
     default:
         return "0   ";
     }
 }
-// Add search functiom
+// Implement Heuristic function
+ int Heuristic(int x1, int x2, int y1, int y2)
+ {
+   return (abs(x2-x1)+abs(y2-y1));
+ }
+
+// Implement search functiom
 vector<vector<State>> Search(vector<vector<State>> board,int init[2],int goal[2] )
 {
   cout<<"NO Path is Found \n";
   return board;
 }
-// Add the PrintBoard function.
+// Implement the PrintBoard function.
 void PrintBoard(const vector<vector<State>> board) {
   for (int i = 0; i < board.size(); i++) {
     for (int j = 0; j < board[i].size(); j++) {
@@ -73,7 +81,19 @@ void PrintBoard(const vector<vector<State>> board) {
   }
 }
 
+// implement AddToOpen helper function
 
+void AddToOpen(int &x, int &y, int &g,  int &h, vector<vector<int>> &opennode,vector<vector<State>> &grid )
+{
+   vector<int>  node;
+   node.push_back(x);
+   node.push_back(y);
+   node.push_back(g);
+   node.push_back(h);
+   opennode.push_back(node);
+   grid[x][y]=State::kClosed;
+}
+#include "./../tests/tests.cpp"
 
 int main() {
 
@@ -83,6 +103,7 @@ int main() {
   int goal[2]={4,5};
   auto solution=Search(board,init,goal);
   PrintBoard(solution);
-
-   
+  // Tests
+  TestHeuristic();
+  TestAddToOpen();
 }
