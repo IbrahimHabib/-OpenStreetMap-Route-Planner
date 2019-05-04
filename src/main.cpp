@@ -59,15 +59,50 @@ string CellString(State cell)
         return "0   ";
     }
 }
+//implement function to compare 2 nodes
+
+bool Compare(vector<int> first, vector<int> sec)
+{
+  int f1,f2;
+  f1=first[2]+first[3];
+  f2=sec[2]+sec[3];
+  if (f1>f2)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
 // Implement Heuristic function
+
  int Heuristic(int x1, int x2, int y1, int y2)
  {
    return (abs(x2-x1)+abs(y2-y1));
  }
 
+ // implement AddToOpen helper function
+
+void AddToOpen(int &x, int &y, int &g,  int &h, vector<vector<int>> &opennode,vector<vector<State>> &grid )
+{
+   vector<int>  node;
+   node.push_back(x);
+   node.push_back(y);
+   node.push_back(g);
+   node.push_back(h);
+   opennode.push_back(node);
+   grid[x][y]=State::kClosed;
+}
+
 // Implement search functiom
 vector<vector<State>> Search(vector<vector<State>> board,int init[2],int goal[2] )
 {
+  vector<vector<int>> open {};
+  int g=0;
+  int h=Heuristic(init[0],goal[0],init[1],goal[1]);
+  AddToOpen(init[0],init[1],g,h,open,board);
   cout<<"NO Path is Found \n";
   return board;
 }
@@ -81,18 +116,7 @@ void PrintBoard(const vector<vector<State>> board) {
   }
 }
 
-// implement AddToOpen helper function
 
-void AddToOpen(int &x, int &y, int &g,  int &h, vector<vector<int>> &opennode,vector<vector<State>> &grid )
-{
-   vector<int>  node;
-   node.push_back(x);
-   node.push_back(y);
-   node.push_back(g);
-   node.push_back(h);
-   opennode.push_back(node);
-   grid[x][y]=State::kClosed;
-}
 #include "./../tests/tests.cpp"
 
 int main() {
@@ -106,4 +130,5 @@ int main() {
   // Tests
   TestHeuristic();
   TestAddToOpen();
+  TestCompare();
 }
