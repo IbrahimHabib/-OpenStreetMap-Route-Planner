@@ -15,13 +15,13 @@ using std::sort;
 enum class State {kEmpty, kObstacle, kClosed, kPath};
 
 // Implement the ParseLine function.
-auto ParseLine(string line)
+vector<State> ParseLine(string line)
 {
     istringstream myline(line);
     vector<State> sv;
     char c;
     int n;
-    while (myline>>n>>c)
+    while (myline >> n >> c && c == ',')
     {
         if (n == 0)
         {
@@ -36,33 +36,19 @@ auto ParseLine(string line)
     
 }
 // Implement the ReadBoardFile function.
-auto ReadBoardFile(string path) {
+vector<vector<State>> ReadBoardFile(string path) {
   ifstream myfile (path);
-  vector<vector<State>> board;
+  vector<vector<State>> board{};
   if (myfile) {
     string line;
     while (getline(myfile, line)) {
-      board.push_back(ParseLine(line));
+      vector<State> row = ParseLine(line);
+      board.push_back(row);
     }
   }
   return board;
 }
 
-// Create the CellString function
-string CellString(State cell)
-{
-    switch (cell)
-    {
-    case State::kObstacle:
-        return "⛰️   ";
-    case State::kClosed:
-        return "2   ";
-     case State::kPath: 
-        return "🚗   ";
-    default:
-        return "0   ";
-    }
-}
 //implement function to compare 2 nodes
 
 bool Compare(const vector<int> first, const vector<int> sec)
@@ -86,21 +72,27 @@ void CellSort(vector<vector<int>> *v) {
 
  int Heuristic(int x1, int x2, int y1, int y2)
  {
-   return (abs(x2-x1)+abs(y2-y1));
+   return (abs(x2 - x1) + abs(y2 - y1));
  }
+
+ // implement CheckValidCell function
+
+bool CheckValidCell(int x, int y, vector<vector<State>> &grid) {
+  bool on_grid_x = (x >= 0 && x < grid.size());
+  bool on_grid_y = (y >= 0 && y < grid[0].size());
+  if (on_grid_x && on_grid_y)
+    return grid[x][y] == State::kEmpty;
+  return false;
+}
 
  // implement AddToOpen helper function
 
-void AddToOpen(int &x, int &y, int &g,  int &h, vector<vector<int>> &opennode,vector<vector<State>> &grid )
+void AddToOpen(int x, int y, int g,  int h, vector<vector<int>> &opennode,vector<vector<State>> &grid )
 {
-   vector<int>  node;
-   node.push_back(x);
-   node.push_back(y);
-   node.push_back(g);
-   node.push_back(h);
-   opennode.push_back(node);
-   grid[x][y]=State::kClosed;
+  opennode.push_back(vector<int>{x, y, g, h});
+  grid[x][y] = State::kClosed;
 }
+
 
 // Implement search functiom
 vector<vector<State>> Search(vector<vector<State>> grid,int init[2],int goal[2] )
@@ -109,9 +101,9 @@ vector<vector<State>> Search(vector<vector<State>> grid,int init[2],int goal[2] 
   int g=0;
   int x=init[0];
   int y=init[1];
-  int h=Heuristic(init[0],goal[0],init[1],goal[1]);
+  int h=Heuristic(x,y,goal[0],goal[1]);
   AddToOpen(x,y,g,h,open,grid);
-  while (open.size()>0)
+  while (open.size() > 0)
   {
     CellSort(&open);
     auto current=open.back();
@@ -127,7 +119,21 @@ vector<vector<State>> Search(vector<vector<State>> grid,int init[2],int goal[2] 
   }
   
   cout<<"NO Path is Found \n";
-  return grid;
+  return std::vector<vector<State>>{};
+}
+
+// Create the CellString function
+string CellString(State cell)
+{
+    switch (cell)
+    {
+    case State::kObstacle:
+        return "⛰️   ";
+     case State::kPath: 
+        return "🚗   ";
+    default:
+        return "0   ";
+    }
 }
 // Implement the PrintBoard function.
 void PrintBoard(const vector<vector<State>> board) {
@@ -148,9 +154,12 @@ int main() {
   auto board =ReadBoardFile("./tests/1.board");
   auto solution = Search(board, init, goal);
   PrintBoard(solution);
+ 
   // Tests
   TestHeuristic();
   TestAddToOpen();
   TestCompare();
+  TestSearch();
+  TestCheckValidCell();
   
 }
