@@ -128,11 +128,11 @@ void TestSearch() {
   auto output = Search(board, init, goal);
   std::cout.clear(); // Enable cout
 
-  vector<vector<State>> solution{{State::kPath, State::kObstacle, State::kEmpty, State::kEmpty, State::kEmpty, State::kEmpty},
+  vector<vector<State>> solution{{State::kStart, State::kObstacle, State::kEmpty, State::kEmpty, State::kEmpty, State::kEmpty},
                             {State::kPath, State::kObstacle, State::kEmpty, State::kEmpty, State::kEmpty, State::kEmpty},
                             {State::kPath, State::kObstacle, State::kEmpty, State::kClosed, State::kClosed, State::kClosed},
                             {State::kPath, State::kObstacle, State::kClosed, State::kPath, State::kPath, State::kPath},
-                            {State::kPath, State::kPath, State::kPath, State::kPath, State::kObstacle, State::kPath}};
+                            {State::kPath, State::kPath, State::kPath, State::kPath, State::kObstacle, State::kFinish}};
 
   if (output != solution) {
     cout << "failed" << "\n";
