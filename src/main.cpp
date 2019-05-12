@@ -14,6 +14,9 @@ using std::sort;
 
 enum class State {kEmpty, kObstacle, kClosed, kPath};
 
+// directional deltas
+const int delta[4][2]{{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
+
 // Implement the ParseLine function.
 vector<State> ParseLine(string line)
 {
@@ -70,9 +73,9 @@ void CellSort(vector<vector<int>> *v) {
 
 // Implement Heuristic function
 
- int Heuristic(int x1, int x2, int y1, int y2)
+ int Heuristic(int x1, int y1, int x2, int y2)
  {
-   return (abs(x2 - x1) + abs(y2 - y1));
+   return abs(x2 - x1) + abs(y2 - y1);
  }
 
  // implement CheckValidCell function
@@ -93,6 +96,35 @@ void AddToOpen(int x, int y, int g,  int h, vector<vector<int>> &opennode,vector
   grid[x][y] = State::kClosed;
 }
 
+//Implement  ExpandNeighbors function
+
+void ExpandNeighbors(const vector<int> &current, int goal[2], vector<vector<int>> &openlist, vector<vector<State>> &grid) {
+  // Get current node's data.
+  int x = current[0];
+  int y = current[1];
+  int g = current[2];
+ 
+  
+
+// loop over neighbors
+ int rows =  sizeof delta / sizeof delta[0];  
+ for (int i = 0; i < rows; i++)
+ {
+  int x2 = x + delta[i][0];
+  int y2 = y +delta[i][1];
+   if (CheckValidCell(x2,y2,grid))
+   {
+    int g2 = g+1;
+    int h2 = Heuristic(x2,y2,goal[0],goal[1]);
+    AddToOpen(x2, y2, g2, h2, openlist, grid);
+
+   }
+   
+ }
+ 
+  
+
+}
 
 // Implement search functiom
 vector<vector<State>> Search(vector<vector<State>> grid,int init[2],int goal[2] )
@@ -115,7 +147,7 @@ vector<vector<State>> Search(vector<vector<State>> grid,int init[2],int goal[2] 
      if (x == goal[0] && y == goal[1]) {
       return grid;
     }
-
+ ExpandNeighbors(current, goal, open, grid);
   }
   
   cout<<"NO Path is Found \n";
@@ -161,5 +193,6 @@ int main() {
   TestCompare();
   TestSearch();
   TestCheckValidCell();
+  TestExpandNeighbors();
   
 }
