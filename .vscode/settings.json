@@ -1,0 +1,11 @@
+ {
+    "files.associations": {
+        "*.tpp": "cpp",
+        "iostream": "cpp",
+        "iosfwd": "cpp",
+        "sstream": "cpp",
+        "vector": "cpp",
+        "headFileGuard.type" : "guid"
+    },
+    "terminal.integrated.shell.windows": "cmd.exe"
+}
